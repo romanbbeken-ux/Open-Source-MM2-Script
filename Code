@@ -1,59 +1,63 @@
-local Players = game:GetService("Players")
+-- Man yknow id love to learn from others code, which I do but hardly any of it is ever open source.
+-- so here you guys go :)
+
+
+local Players = game:GetService("Players") -- Here are the services I used
 local run = game:GetService("RunService")
 
-local function CreateHighlight(Character)
+local function CreateHighlight(Character) -- Player.Character = Character in this situation
 	if (Character and Character:FindFirstChild("Highlight")) then
-		return
+		return -- Stops if a Highlight is already in the Character that this is running on
 	end
 	
-	local ESP = Instance.new("Highlight")
-	ESP.Parent = Character
-	ESP.FillTransparency = 0.5
-	ESP.OutlineColor = Color3.fromRGB(0, 0, 0)
-	ESP.FillColor = Color3.fromRGB(0, 255, 0)
+	local ESP = Instance.new("Highlight") -- Uses Highlight for the esp part (Highlight is very clean and smooth)
+	ESP.Parent = Character -- HAS to parent to the character or the Highlight wont be visible
+	ESP.FillTransparency = 0.5 -- If its fully invisible then its useless, but if its fully visible its hard to see.
+	ESP.OutlineColor = Color3.fromRGB(0, 0, 0) -- Black outline
+	ESP.FillColor = Color3.fromRGB(0, 255, 0) -- Feel free to change these (Innocent color)
 end
 
-Players.PlayerAdded:Connect(function(Player)
-	Player.CharacterAdded:Connect(function(character)
-		CreateHighlight(character)
+Players.PlayerAdded:Connect(function(Player) -- Alright so when a new player joins the game
+	Player.CharacterAdded:Connect(function(Character) -- it first marks them down as a player, then adds them to the player.Character list
+		CreateHighlight(Character) -- but as Character make sense?
 	end)
 end)
 
-for _, Player in pairs(Players:GetPlayers()) do
-	Player.CharacterAdded:Connect(function(Character)
-        CreateHighlight(Character)
+for _, Player in pairs(Players:GetPlayers()) do -- Runs for all players regardless
+	Player.CharacterAdded:Connect(function(Character) -- for already existing Characters that have been marked as Character
+        CreateHighlight(Character) -- then runs them through the Highlight system
     end)
 
-	if Player.Character then
-		CreateHighlight(Player.Character)
+	if Player.Character then -- If it hasnt been marked yet this is where it starts
+		CreateHighlight(Player.Character) -- runs them through Highlight system
 	end
 end
 
 
-local function SPYING(Player)
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	if not Character then return end
-	local ESP = Character.Highlight or Character:WaitForChild("Highlight")
-	if not ESP then return end
+local function SPYING(Player) -- This is where the frames constantly run through using run service to update the colors
+	local Character = Player.Character or Player.CharacterAdded:Wait() -- If the character isnt in the game yet it waits for it
+	if not Character then return end -- if the character is nil then it stops
+	local ESP = Character.Highlight or Character:WaitForChild("Highlight") -- Uses already existing highlights to prevent lag
+	if not ESP then return end -- If it doesnt exist yet then it stops here as itll cause errors in the script
 
-	ESP.FillColor =Color3.fromRGB(0, 255, 0)
+	ESP.FillColor = Color3.fromRGB(0, 255, 0) -- Since its constantly updating you dont want a past murderer to be marked as murderer while they innocent so use this for updating back to innocent
 
-	if (Player.Backpack and Player.Backpack:FindFirstChild("Gun")) or (Character and Character:FindFirstChild("Gun")) then
+	if (Player.Backpack and Player.Backpack:FindFirstChild("Gun")) or (Character and Character:FindFirstChild("Gun")) then -- If it finds a gun in the players backpack it marks them as blue(Sheriff)
 		ESP.FillColor = Color3.fromRGB(0, 0, 255)
-	elseif (Player.Backpack and Player.Backpack:FindFirstChild("Knife")) or (Character and Character:FindFirstChild("Knife")) then
+	elseif (Player.Backpack and Player.Backpack:FindFirstChild("Knife")) or (Character and Character:FindFirstChild("Knife")) then -- If it finds a knife in the players backpack it marks them as red(Murderer)
 		ESP.FillColor = Color3.fromRGB(255, 0, 0)
-	else ESP.FillColor = Color3.fromRGB(0, 255, 0)
+	else ESP.FillColor = Color3.fromRGB(0, 255, 0) -- Yeah I dont know why I put this here but it doesnt really hurt to make sure does it?
 
 
 	end
 end
 
-run.RenderStepped:Connect(function()
+run.RenderStepped:Connect(function() -- Run service to make sure ITS CONSTANTLY UPDATING
 
-	for _, v in pairs(Players:GetPlayers()) do
-		local Character = v.Character
-		if (Character and Character:FindFirstChild("Highlight")) then
+	for _, v in pairs(Players:GetPlayers()) do -- Runs through all players
+		local Character = v.Character -- v = Player in this sense _ is just i if you dont care about i
+		if (Character and Character:FindFirstChild("Highlight")) then -- if it finds the highlight then it runs the spy
 			SPYING(v)
-        end
+        end -- if not it just ends
 	end
 end)
