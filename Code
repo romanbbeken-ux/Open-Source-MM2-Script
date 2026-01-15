@@ -1,5 +1,5 @@
 -- Man yknow id love to learn from others code, which I do but hardly any of it is ever open source.
--- so here you guys go :)
+-- so here you guys go :D
 
 
 local Players = game:GetService("Players") -- Here are the services I used
