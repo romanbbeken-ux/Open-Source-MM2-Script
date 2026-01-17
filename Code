@@ -37,14 +37,16 @@ end
 local function SPYING(Player) -- This is where the frames constantly run through using run service to update the colors
 	local Character = Player.Character or Player.CharacterAdded:Wait() -- If the character isnt in the game yet it waits for it
 	if not Character then return end -- if the character is nil then it stops
+	local Backpack = Player.Backpack
+	if not Backpack then return end
 	local ESP = Character.Highlight or Character:WaitForChild("Highlight") -- Uses already existing highlights to prevent lag
 	if not ESP then return end -- If it doesnt exist yet then it stops here as itll cause errors in the script
 
 	ESP.FillColor = Color3.fromRGB(0, 255, 0) -- Since its constantly updating you dont want a past murderer to be marked as murderer while they innocent so use this for updating back to innocent
 
-	if (Player.Backpack and Player.Backpack:FindFirstChild("Gun")) or (Character and Character:FindFirstChild("Gun")) then -- If it finds a gun in the players backpack it marks them as blue(Sheriff)
+	if (Backpack and Backpack:FindFirstChild("Gun")) or (Character and Character:FindFirstChild("Gun")) then -- If it finds a gun in the players backpack it marks them as blue(Sheriff)
 		ESP.FillColor = Color3.fromRGB(0, 0, 255)
-	elseif (Player.Backpack and Player.Backpack:FindFirstChild("Knife")) or (Character and Character:FindFirstChild("Knife")) then -- If it finds a knife in the players backpack it marks them as red(Murderer)
+	elseif (Backpack and Backpack:FindFirstChild("Knife")) or (Character and Character:FindFirstChild("Knife")) then -- If it finds a knife in the players backpack it marks them as red(Murderer)
 		ESP.FillColor = Color3.fromRGB(255, 0, 0)
 	else ESP.FillColor = Color3.fromRGB(0, 255, 0) -- Yeah I dont know why I put this here but it doesnt really hurt to make sure does it?
 
